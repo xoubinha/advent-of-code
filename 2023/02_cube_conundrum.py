@@ -1,3 +1,4 @@
+from functools import reduce
 
 BAG = {"red": 12,
        "green": 13,
@@ -40,10 +41,35 @@ def part_one(games):
             possible_games_ids.append(game_id)
     return sum(possible_games_ids)
 
+def get_min_set_of_cubes(game_set, minimum_bag):
+    for cubes in game_set:
+        number, color = cubes.split(" ")
+        if minimum_bag[color] < int(number):
+            minimum_bag[color] = int(number)
+    return minimum_bag
+
+def get_power(minimum_bag):
+    return reduce(lambda x, y: x * y, minimum_bag.values())
+
+def part_two(games):
+    solution = 0
+    for game in games:
+        minimum_bag = {"red": 0,
+                    "green":0,
+                    "blue": 0}
+        _, game = parse_game(game)
+        for game_set in game:
+            minimum_bag = get_min_set_of_cubes(game_set, minimum_bag)
+        solution += get_power(minimum_bag)
+    return solution
 
 if __name__ == '__main__':
     FILEPATH = "./data/02_cube_conundrum.txt"
     games = read_input_file(FILEPATH)
+
     part_one_solution = part_one(games)
+    part_two_solution = part_two(games)
+    
     print(f"Part 1 - {part_one_solution}")
+    print(f"Part 2 - {part_two_solution}")
 
